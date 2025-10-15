@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="MILR: Improving Multimodal Image Generation via Test-Time Latent Reasoning">
+  <meta name="keywords" content="Image Generation, Latent Reasoning">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MILR: Improving Multimodal Image Generation via Test-Time Latent Reasoning</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script> -->
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/letter-m.png">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://scholar.google.com/citations?user=xr7kNGEAAAAJ&hl=zh-CN">
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      </a>
+
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More Research
+        </a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="https://sport-agents.github.io/">
+            SPORT
+          </a>
+          <a class="navbar-item" href="https://bigai-nlco.github.io/LatentSeek/">
+            LatentSeek
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">MILR: Improving Multimodal Image Generation via Test-Time Latent Reasoning</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=xr7kNGEAAAAJ&hl=zh-CN">Yapeng Mi</a><sup>1,4</sup>,</span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=K7gsqkMAAAAJ&hl=en">Hengli Li</a><sup>2,4</sup>,</span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=-T9FigIAAAAJ&hl=en">Yanpeng Zhao</a><sup>4</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://openreview.net/profile?id=~Chenxi_Li7">Chenxi Li</a><sup>3,4</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=9HH9I6YAAAAJ&hl=en">Huimin Wu</a><sup>4</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://jeasinema.github.io/">Xiaojian Ma</a><sup>4</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=Al8dyb4AAAAJ&hl=en">Song-Chun Zhu</a><sup>2,4</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=7k_1QFIAAAAJ&hl=en">Ying Nian Wu</a><sup>5</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://liqing.io/">Qing Li</a><sup>4</sup>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>University of Science and Technology of China,</span>
+            <span class="author-block"><sup>2</sup>Peking University,</span>
+            <span class="author-block"><sup>3</sup>Tsinghua University,</span>
+            <span class="author-block"><sup>4</sup>BIGAI,</span>
+            <span class="author-block"><sup>5</sup>University of California, Los Angeles</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <!-- <span class="link-block">
+                <a href="https://arxiv.org/pdf/2011.12948"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span> -->
+              <span class="link-block">
+                <a href="https://www.arxiv.org/abs/2509.22761"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Video Link. -->
+              <!-- <span class="link-block">
+                <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span> -->
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/google/nerfies"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+              <!-- Dataset Link. -->
+              <span class="link-block">
+                <a href="https://github.com/google/nerfies/releases/tag/0.1"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Gallery</span>
+                  </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <!-- <video id="teaser" autoplay muted loop playsinline height="100%">
+        <source src="./static/videos/teaser.mp4"
+                type="video/mp4">
+      </video> -->
+      <img id="teaser" src="./static/images/teaser.png" alt="Free-viewpoint portrait example">
+      <h3 class="subtitle has-text-centered">
+        Figure 1. Latent reasoning of <span class="dnerf">MILR</span>. The black solid line denotes extracting the output vector representations \(z^{k}\) of the text tokens \(z^{(t)}\) and image tokens \(z^{(v)}\) to be optimized, and the black dashed line denotes decoding from the optimized latent vectors \(z^{k+1}\), where \(z=[z^{(t)},z^{(v)}]\).
+      </h3>
+    </div>
+  </div>
+</section>
+
+
+<!-- <section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item item-steve">
+          <video poster="" id="steve" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/steve.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-chair-tp">
+          <video poster="" id="chair-tp" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/chair-tp.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-shiba">
+          <video poster="" id="shiba" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/shiba.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-fullbody">
+          <video poster="" id="fullbody" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/fullbody.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-blueshirt">
+          <video poster="" id="blueshirt" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/blueshirt.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-mask">
+          <video poster="" id="mask" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/mask.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-coffee">
+          <video poster="" id="coffee" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/coffee.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-toby">
+          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/toby2.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+
+
+<!-- <section class="section">
+  <div class="container is-max-desktop"> -->
+    <!-- Abstract. -->
+    <!-- <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Reasoning-augmented machine learning systems have shown improved performance in various domains, including image generation. However, existing reasoning-based methods for image generation either restrict reasoning to a single modality (image or text) or rely on high-quality reasoning data for fine-tuning. To tackle these limitations, we propose MILR, a test-time method that jointly reasons over image and text in a unified latent vector space. Reasoning in MILR is performed by searching through vector representations of discrete image and text tokens. Practically, this is implemented via the policy gradient method, guided by an image quality critic. We instantiate MILR within the unified multimodal understanding and generation (MUG) framework that natively supports language reasoning before image synthesis and thus facilitates cross-modal reasoning. The intermediate model outputs, which are to be optimized, serve as the unified latent space, enabling MILR to operate entirely at test time. We evaluate MILR on GenEval, T2I-CompBench, and WISE, achieving state-of-the-art results on all benchmarks. Notably, on knowledge-intensive WISE, MILR attains an overall score of 0.63, improving over the baseline by 80%. Our further analysis indicates that joint reasoning in the unified latent space is the key to its strong performance. Moreover, our qualitative studies reveal MILR's non-trivial ability in temporal and cultural reasoning, highlighting the efficacy of our reasoning method.
+          </p>
+        </div>
+      </div>
+    </div> -->
+    <!--/ Abstract. -->
+
+    <!-- Paper video. -->
+    <!-- <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Video</h2>
+        <div class="publication-video">
+          <iframe src="https://www.youtube.com/embed/MrKrnHhk8IA?rel=0&amp;showinfo=0"
+                  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div> -->
+    <!--/ Paper video. -->
+  <!-- </div>
+</section> -->
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Introduction</h2>
+
+        <div class="content has-text-justified">
+          <p>
+            Reasoning-augmented machine learning systems have shown improved performance in various domains, 
+            including image generation. However, existing reasoning-based methods for image generation either restrict reasoning to 
+            a single modality (image or text) or rely on high-quality reasoning data for fine-tuning. To tackle these limitations, 
+            we propose MILR, a test-time method that jointly reasons over image and text in a unified latent vector space. 
+            Reasoning in MILR is performed by searching through vector representations of discrete image and text tokens. 
+            Practically, this is implemented via the policy gradient method, guided by an image quality critic. 
+            We instantiate MILR within the unified multimodal understanding and generation framework that natively supports language reasoning 
+            before image synthesis and thus facilitates cross-modal reasoning. The intermediate model outputs, which are to be optimized, 
+            serve as the unified latent space, enabling MILR to operate entirely at test time. We evaluate MILR on GenEval, T2I-CompBench, and WISE, 
+            achieving state-of-the-art results on all benchmarks. Notably, on knowledge-intensive WISE, MILR attains an overall score of 0.63, 
+            improving over the baseline by 80%. Our further analysis indicates that joint reasoning in the unified latent space is the key to 
+            its strong performance. Moreover, our qualitative studies reveal MILR's non-trivial ability in temporal and cultural reasoning, 
+            highlighting the efficacy of our reasoning method.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Image Generation via Test-time Latent Reasoning (MILR)</h2>
+        <img id="framework" src="./static/images/framework.png" alt="Free-viewpoint portrait example">
+        <h3 class="subtitle has-text-centered">
+        Figure 2. Overview of MILR. MILR performs test-time latent reasoning in a unified latent space; 
+        it uses policy gradients to iteratively refine text & image latents \(z^{(t)}\), \(z^{(v)}\), 
+        guided by a reward model.
+        </h3>
+        <div class="content has-text-justified">
+          <h3>Multi-Modal Latent Reasoning</h3>
+          <!-- <p>
+            Rather than searching over discrete image and text tokens, 
+            we propose searching in the unified latent vector space, 
+            that is, searching over their continuous vector representations. 
+            As in MUG, these vectors correspond to the intermediate model outputs at respective token positions. 
+            They lie in a vector space that encodes both image and text tokens, 
+            offering a unified view of visual and textual reasoning and facilitating cross-modal reasoning 
+            (see Figure 2).
+          </p> -->
+          <p>
+            Formally, denoting the latent representations of image and text tokens by
+            \( \mathbf{z}^{(v)} = z^{(v)}_{1:N} \) and \( \mathbf{z}^{(t)} = z^{(t)}_{1:M} \), respectively,
+            where \( z^{(v)}, z^{(t)} \in \mathbb{R}^{d} \) are the outputs from the same Transformer layer and thus lie in a shared
+            \( d \)-dimensional vector space. The goal of latent reasoning is to find an optimal latent representation
+            that maximizes the expected reward under \( p(\cdot \mid \mathbf{z}, c) \) without modifying any model parameters;
+            we can therefore write the reasoning target as:
+          </p>
+          <div style="text-align:center; margin: 0.75rem 0;">
+            $$ \mathbf{z}^{*} = \arg\max_{\mathbf{z}}
+              \mathbb{E}_{V_f \sim p(\cdot \mid \mathbf{z},\, c)} \big[ R(V_f, c) \big] $$
+          </div>
+          <p>
+            where \( \mathbf{z} = [\mathbf{z}^{(t)};\mathbf{z}^{(v)}] \) indicates the multimodal latent representation of the token
+            sequence \( [\mathbf{t}, \mathbf{v}] \). We refer to this optimization problem as <em>multimodal latent reasoning</em>.
+            Given the optimal \( \mathbf{z}^{\star} \) from a specific model layer, to produce the final \( V_f \), we continue the
+            forward pass until it is decoded into discrete tokens \( [\mathbf{t}, \mathbf{v}] \). Thus, the pixel image generation becomes:
+          </p>
+          <div style="text-align:center; margin:0.75rem 0;">
+            $$ p(V_f \mid \mathbf{z}^*, c) \;=\; p\!\left(V_f \mid \mathbf{t}, \mathbf{v}, c\right)\;
+              p\!\left(\mathbf{t}, \mathbf{v} \mid \mathbf{z}^*\right) $$
+          </div>
+          <p>
+            where \( p(\mathbf{t}, \mathbf{v} \mid \mathbf{z}^*) \) represents the remaining forward pass of MUG starting with \( \mathbf{z}^* \).
+          </p>
+        </div>
+        <div class="content has-text-justified">
+          <h3>Gradient-based Optimization for Latent Reasoning</h3>
+          <p>
+            In general, the objective above has no closed-form solution, so we use REINFORCE, a policy-gradient method.
+            Prior work applies it to fully textual reasoning; here we extend it to unified multimodal latent reasoning for image generation.
+            With REINFORCE, the cross-modal update is:
+          </p>
+          <div style="text-align:center; margin:0.75rem 0;">
+            $$
+            \mathbf{z}^{k+1} \leftarrow \mathbf{z}^{k} + \eta \cdot \mathcal{J}(\mathbf{z}^{k}),
+            $$
+          </div>
+                    <div style="text-align:center; margin:0.75rem 0;">
+            $$
+            \mathcal{J}(\mathbf{z}^{k}) = \mathbb{E}_{V_f \sim p(\cdot \mid \mathbf{z}^{k},\, c)}
+            \Big[ R(V_f, c)\, \nabla_{\mathbf{z}} \log p(\mathbf{t}, \mathbf{v} \mid \mathbf{z}^{k}) \Big].
+            $$
+          </div>
+          <p>
+            Here, \( \eta \) is the learning rate. For efficiency, we take \( \mathbf{z} \) from the last Transformer layer (inputs to the
+            modality-specific decoding heads). We approximate \( \mathcal{J}(\mathbf{z}) \) with a single sampled pair
+            \( (\mathbf{t}, \mathbf{v}) \). Gradients back-propagate only to the outputs \( \mathbf{z} \), leaving model parameters unchanged,
+            making MILR a test-time reasoning method.
+          </p>
+          <p>
+            Naively, we would optimize all \( M+N \) latents in \( \mathbf{z}_{1:M+N} \), 
+            but searching using only the guidance of a reward model is potentially biased and does not 
+            leverage MUG’s generative capacity for exploration. Instead, we optimize only the 
+            first \( \lambda_{t} M \) latents for text with \( \lambda_{t}\in(0,1] \)); after decoding them 
+            into discrete tokens, we complete textual reasoning via standard autoregressive generation 
+            conditioned on them.
+            For visual reasoning, we adopt a similar strategy and optimize the 
+            first \( \lambda_{v} N \) latents with \( \lambda_{v}\in(0,1] \)), consistent 
+            with observations that the first few tokens govern global image structure while 
+            the remaining tokens primarily influence high-frequency details. The full algorithm is shown below.
+          </p>
+          <img id="alg1" src="./static/images/alg1.png" alt="Free-viewpoint portrait example">
+          <img id="alg2" src="./static/images/alg2.png" alt="Free-viewpoint portrait example">
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="columns is-centered"> -->
+
+      <!-- Visual Effects. -->
+      <!-- <div class="column">
+        <div class="content">
+          <h2 class="title is-3">Visual Effects</h2>
+          <p>
+            Using <i>nerfies</i> you can create fun visual effects. This Dolly zoom effect
+            would be impossible without nerfies since it would require going through a wall.
+          </p>
+          <video id="dollyzoom" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/dollyzoom-stacked.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div> -->
+      <!--/ Visual Effects. -->
+
+      <!-- Matting. -->
+      <!-- <div class="column">
+        <h2 class="title is-3">Matting</h2>
+        <div class="columns is-centered">
+          <div class="column content">
+            <p>
+              As a byproduct of our method, we can also solve the matting problem by ignoring
+              samples that fall outside of a bounding box during rendering.
+            </p>
+            <video id="matting-video" controls playsinline height="100%">
+              <source src="./static/videos/matting.mp4"
+                      type="video/mp4">
+            </video>
+          </div>
+
+        </div>
+      </div>
+    </div> -->
+    <!--/ Matting. -->
+
+    <!-- Animation. -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Experiments</h2>
+
+        <!-- Interpolating. -->
+        <h3 class="title is-4">Main Results</h3>
+        <img id="geneval" src="./static/images/geneval_results.png" alt="Free-viewpoint portrait example">
+        <img id="compbench_wise" src="./static/images/compbench_wise_results.png" alt="Free-viewpoint portrait example">
+        <div class="content has-text-justified">
+          <p>
+            MILR achieves state-of-the-art results on GenEval, one of the most widely-used benchmarks for
+            image generation (see Table 1). It improves over the base Janus-Pro-7B by 0.17, with the largest
+            increases obtained from Counting (+0.34), Position (+0.21), and Attribute Binding (+0.27). Notably, MILR surpasses frontier non-reasoning models such as SD3-Medium, BAGEL, and GPT-4o
+            (+12%). Compared with training-based reasoning models (e.g., GoT-R1 and T2I-R1), MILR performs better and requires no parameter tuning. For fairness, we also compare MILR with test-time
+            reasoning models. Surprisingly, it outperforms ReflectionFlow and PARM (+4.5%) that rely on scaling up test-time computation, demonstrating the superiority of our test-time optimization method.
+          </p>
+          <p>
+            We further evaluate MILR on two additional benchmarks: T2I-CompBench and WISE (see Table 2). Again, it achieves the best performance on both, highlighting the robustness of our model. Specifically, on T2I-CompBench, MILR improves over the base Janus-Pro-7B by a large margin (+0.14)
+            and slightly outperforms T2I-R1, a strong training-based reasoning model. On WISE, which emphasizes world knowledge understanding, MILR outperforms the base Janus-Pro-7B (+80%) and
+            the second-best model T2I-R1 (+16.7%), implying the importance of reasoning in comprehending knowledge-intensive instructions. The case comparation is shown in Figure 3.
+          </p>
+        </div>
+        <img id="case_compare" src="./static/images/case_compare.png" alt="Free-viewpoint portrait example">
+        <h3 class="subtitle has-text-centered">
+        Figure 3. Qualitative studies on WISE. Reasoning cues are highlighted in red.
+        </h3>
+        <br/>
+        <!--/ Interpolating. -->
+
+        <!-- Re-rendering. -->
+        <h3 class="title is-4">Hyperparameters Analysis</h3>
+        <img id="steps" src="./static/images/steps.jpg" alt="Free-viewpoint portrait example">
+        <h3 class="subtitle has-text-centered">
+        Figure 4. Performance across three benchmarks for varying optimization steps.
+        </h3>
+        
+        <img id="text_image_ratio" src="./static/images/text_image_ratio.jpg" alt="Free-viewpoint portrait example">
+        <h3 class="subtitle has-text-centered">
+        Figure 5. GenEval scores with varying optimization ratios of text and image tokens.
+        </h3>
+        <div class="content has-text-justified">
+          <p>
+            We analyze three important hyperparameters of MILR: (1) the maximum optimization step T (shown in Figure 4), 
+            (2) the portion of text tokens to be optimized λt in text-only optimization(shown in Figure 5), and 
+            (3) the proportion of image tokens to be optimized λv in image-only optimization(shown in Figure 5). And we have the following findings:
+            <ul>
+              <li>Scaling up the number of optimization steps improves performance on all benchmarks.</li>
+              <li>Optimizing a moderate amount (e.g., 20%) of text tokens leads to the best performance.</li>
+              <li>Optimizing a tiny amount (e.g., 2%) of image tokens gives rise to the best result.</li>
+            </ul>
+          </p>
+        </div>
+        <!--/ Re-rendering. -->
+
+        <h3 class="title is-4">Reward Models</h3>
+        <img id="reward_model" src="./static/images/reward_bar_chart.jpg" alt="Free-viewpoint portrait example">
+        <h3 class="subtitle has-text-centered">
+        Figure 6. Performance with different reward models on GenEval.
+        </h3>
+        <div class="content has-text-justified">
+          <p>
+            To show that MILR is effective without the reliance on <img src="./static/images/icons/oracle_reward.jpg" alt="SelfReward icon" width="18" height="18">OracleReward, we test it with a set of off-the-shelf 
+            reward models on GenEval:
+          </p>
+          <ul>
+            <li>
+              <img src="./static/images/icons/selfreward.jpg" alt="SelfReward icon" width="18" height="18">
+              <em>SelfReward</em> uses MUG itself (e.g., Janus-Pro in this work) to evaluate images.
+            </li>
+            <li>
+              <img src="./static/images/icons/gpt4o.jpg" alt="GPT-4o icon" width="18" height="18">
+              <em>GPT-4o</em> represents a frontier critic for assessing image quality.
+            </li>
+            <li>
+              <img src="./static/images/icons/unified_reward.jpg" alt="UnifiedReward icon" width="18" height="18">
+              <em>UnifiedReward</em> is specifically tuned for a unified evaluation of MUG.
+            </li>
+            <li>
+              <img src="./static/images/icons/mixed_reward.jpg" alt="MixedReward icon" width="18" height="18">
+              <em>MixedReward</em> is a composite critic for more comprehensive evaluation. It aggregates rewards from
+              specialized models, including GroundingDINO(evaluating object detection), GIT(judging colors), and an aesthetics scorer(assessing aesthetics).
+            </li>
+          </ul>
+        </div>
+        <p>
+          Unsurprisingly, <img src="./static/images/icons/oracle_reward.jpg" alt="SelfReward icon" width="18" height="18"> gives rise to the best performance across all dimensions (see Figure 6). 
+          For nonoracle critics, all variants surpass the baseline in terms of the overall score. Notably, MILR remains
+          relatively robust to different reward models, except for <img src="./static/images/icons/selfreward.jpg" alt="SelfReward icon" width="18" height="18">, which performs poorly on Counting
+          (around 0.5). Among non-oracle critics, <img src="./static/images/icons/mixed_reward.jpg" alt="MixedReward icon" width="18" height="18"> performs the best, suggesting that, in the absence of oracle rewards, we can derive a strong universal reward model by combining specialized critic models.
+          Moreover, MILR+<img src="./static/images/icons/mixed_reward.jpg" alt="MixedReward icon" width="18" height="18"> slightly outperforms the strong Best-of-N+<img src="./static/images/icons/mixed_reward.jpg" alt="MixedReward icon" width="18" height="18"> baseline (+2.4%) under comparable computation (i.e., N = T = 20), once again demonstrating the superiority of our method.
+        </p>
+
+      </div>
+    </div>
+    <!--/ Animation. -->
+
+
+    <!-- Concurrent Work. -->
+    <!-- <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Related Links</h2>
+
+        <div class="content has-text-justified">
+          <p>
+            There's a lot of excellent work that was introduced around the same time as ours.
+          </p>
+          <p>
+            <a href="https://arxiv.org/abs/2104.09125">Progressive Encoding for Neural Optimization</a> introduces an idea similar to our windowed position encoding for coarse-to-fine optimization.
+          </p>
+          <p>
+            <a href="https://www.albertpumarola.com/research/D-NeRF/index.html">D-NeRF</a> and <a href="https://gvv.mpi-inf.mpg.de/projects/nonrigid_nerf/">NR-NeRF</a>
+            both use deformation fields to model non-rigid scenes.
+          </p>
+          <p>
+            Some works model videos with a NeRF by directly modulating the density, such as <a href="https://video-nerf.github.io/">Video-NeRF</a>, <a href="https://www.cs.cornell.edu/~zl548/NSFF/">NSFF</a>, and <a href="https://neural-3d-video.github.io/">DyNeRF</a>
+          </p>
+          <p>
+            There are probably many more by the time you are reading this. Check out <a href="https://dellaert.github.io/NeRF/">Frank Dellart's survey on recent NeRF papers</a>, and <a href="https://github.com/yenchenlin/awesome-NeRF">Yen-Chen Lin's curated list of NeRF papers</a>.
+          </p>
+        </div>
+      </div>
+    </div> -->
+    <!--/ Concurrent Work. -->
+
+  </div>
+</section>
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{mi2025milr,
+  title={MILR: Improving Multimodal Image Generation via Test-Time Latent Reasoning},
+  author={Mi, Yapeng and Li, Hengli and Zhao, Yanpeng and Li, Chenxi and Wu, Huimin and Ma, Xiaojian and Zhu, Song-Chun and Wu, Ying Nian and Li, Qing},
+  journal={arXiv preprint arXiv:2509.22761},
+  year={2025}
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link"
+         href="https://www.arxiv.org/pdf/2509.22761">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/keunhong" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            The <a href="https://github.com/nerfies/nerfies.github.io">source code</a> for the website was taken from Nerfies. We appreciate the authors sharing the templates.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
